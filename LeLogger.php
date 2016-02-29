@@ -52,7 +52,7 @@ class LeLogger
     private $_host_name = "";
     private $_host_id = "";
 
-    private $severity = LOG_DEBUG;
+    public $severity = LOG_DEBUG;
 
     private $connectionTimeout;
 
@@ -69,7 +69,7 @@ class LeLogger
 
     private $errstr;
 
-    public function __construct($token, $persistent = true, $ssl = false, $severity = LOG_DEBUG, $datahubEnabled = false, $datahubIPAddress = '', $datahubPort = 10000, $host_id = '', $host_name = '', $host_name_enabled = false, $add_local_timestamp = true)
+    public function __construct($token, $severity = LOG_DEBUG, $persistent = true, $ssl = false, $datahubEnabled = false, $datahubIPAddress = '', $datahubPort = 10000, $host_id = '', $host_name = '', $host_name_enabled = false, $add_local_timestamp = true)
     {
         if ($datahubEnabled === true) {
 
