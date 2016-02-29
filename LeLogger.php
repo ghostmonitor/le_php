@@ -25,20 +25,20 @@ class LeLogger
      *  Alert
      *  Critical
      *  Error
-      *  Warning
+     *  Warning
      *  Notice
      *  Info
      *  Debug
      */
 
     // Logentries server address for receiving logs
-    const LE_ADDRESS = 'tcp://api.logentries.com';
+    public $leAddress = 'tcp://api.logentries.com';
     // Logentries server address for receiving logs via TLS
-    const LE_TLS_ADDRESS = 'tls://api.logentries.com';
+    public $leTlsAddress = 'tls://api.logentries.com';
     // Logentries server port for receiving logs by token
-    const LE_PORT = 10000;
+    public $lePort= 10000;
     // Logentries server port for receiving logs with TLS by token
-    const LE_TLS_PORT = 20000;
+    public $leTlsPort = 20000;
 
     private $resource = null;
 
@@ -60,32 +60,16 @@ class LeLogger
 
     private $use_ssl = false;
 
-    private static $_timestampFormat = 'Y-m-d G:i:s';
+    private $_timestampFormat = 'Y-m-d G:i:s';
 
     /** @var LeLogger[] */
-    private static $m_instance = array();
+    private $m_instance = array();
 
     private $errno;
 
     private $errstr;
 
-    public static function getLogger($token, $persistent, $ssl, $severity, $datahubEnabled, $datahubIPAddress, $datahubPort, $host_id, $host_name, $host_name_enabled, $add_local_timestamp)
-    {
-        if (!isset(self::$m_instance[$token])) {
-            self::$m_instance[$token] = new LeLogger($token, $persistent, $ssl, $severity, $datahubEnabled, $datahubIPAddress, $datahubPort, $host_id, $host_name, $host_name_enabled, $add_local_timestamp);
-        }
-
-        return self::$m_instance[$token];
-    }
-
-
-    // Destroy singleton instance, used in PHPUnit tests
-    public static function tearDown()
-    {
-        self::$m_instance = array();
-    }
-
-    private function __construct($token, $persistent, $ssl, $severity, $datahubEnabled, $datahubIPAddress, $datahubPort, $host_id, $host_name, $host_name_enabled, $add_local_timestamp)
+    public function __construct($token, $persistent = true, $ssl = false, $severity = LOG_DEBUG, $datahubEnabled = false, $datahubIPAddress = '', $datahubPort = 10000, $host_id = '', $host_name = '', $host_name_enabled = false, $add_local_timestamp = true)
     {
         if ($datahubEnabled === true) {
 
@@ -156,14 +140,14 @@ class LeLogger
     {
 
         if (empty($token)) {
-            throw new InvalidArgumentException('Logentries Token was not provided in logentries.php');
+            throw new \InvalidArgumentException('Logentries Token was not provided in logentries.php');
         }
     }
 
     public function validateDataHubIP($datahubIPAddress)
     {
         if (empty($datahubIPAddress)) {
-            throw new InvalidArgumentException('Logentries Datahub IP Address was not provided in logentries.php');
+            throw new \InvalidArgumentException('Logentries Datahub IP Address was not provided in logentries.php');
         }
     }
 
@@ -193,11 +177,11 @@ class LeLogger
     public function getPort()
     {
         if ($this->isTLS()) {
-            return self::LE_TLS_PORT;
+            return $this->leTlsPort;
         } elseif ($this->isDatahub()) {
             return $this->_datahubPort;
         } else {
-            return self::LE_PORT;
+            return $this->lePort;
         }
     }
 
@@ -215,12 +199,12 @@ class LeLogger
     public function getAddress()
     {
         if ($this->isTLS() && !$this->isDatahub()) {
-            return self::LE_TLS_ADDRESS;
+            return $this->leTlsAddress;
 
         } elseif ($this->isDatahub()) {
             return $this->_datahubIPAddress;
         } else {
-            return self::LE_ADDRESS;
+            return $this->leAddress;
         }
     }
 
@@ -321,7 +305,7 @@ class LeLogger
         $this->connectIfNotConnected();
 
         if ($this->severity >= $curr_severity) {
-            $prefix = ($this->add_timestamp ? $this->_getTime($curr_severity) . ' - ' : '') . $this->_getLevel($curr_severity) . ' - ';
+            $prefix = ($this->add_timestamp ? $this->_getTime() . ' - ' : '') . $this->_getLevel($curr_severity) . ' - ';
 
             $multiline = $this->substituteNewline($line);
 
@@ -368,7 +352,7 @@ class LeLogger
 
     private function _getTime()
     {
-        return date(self::$_timestampFormat);
+        return date($this->_timestampFormat);
     }
 
     private function _getLevel($level)

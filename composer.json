@@ -1,22 +1,16 @@
 {
-    "name": "logentries/logentries",
-    "description": "Logging library for use with Logentries",
-    "autoload": {
-        "classmap": [
-            "./"
-        ]
-    },
-    "license": "MIT",
-    "require-dev": {
-        "phpunit/phpunit": "3.7.*"
-    },
+    "name": "ghostmonitor/logentries",
+    "description": "Ghostmonitor Logentries Fork",
     "authors": [
         {
-            "name": "Mark Lacomber",
-            "email": "marklacomber@gmail.com"
+            "name": "Ghostmonitor",
+            "email": "system@ghosmonitor.com"
         }
     ],
-    "require": {
-
-    }
+    "autoload": {
+        "psr-4": {
+            "Logentries\\": "."
+        }
+    },
+    "minimum-stability": "dev"
 }
